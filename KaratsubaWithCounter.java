@@ -3,27 +3,14 @@ import java.util.Random;
 
 /**
  * =============================================================
- * CPT212 Design & Analysis of Algorithms
  * Assignment 1 – Part 2
- *
  * Karatsuba Multiplication Algorithm with Operation Counter
  * =============================================================
- *
- * BACKGROUND
- * ----------
- * Discovered by Anatolii Karatsuba in 1960, the Karatsuba algorithm
- * uses divide-and-conquer to reduce the number of single-digit
- * multiplications needed to multiply two n-digit numbers.
- *
- * ALGORITHM IDEA
- * --------------
  * Given two n-digit numbers x and y, let m = ceil(n/2).
  * Split each number at the midpoint:
  *     x = a * 10^m  +  b      (a = high half, b = low half)
  *     y = c * 10^m  +  d
- *
  * Naively: x*y = ac*10^(2m) + (ad+bc)*10^m + bd   → 4 sub-multiplications
- *
  * Karatsuba's trick: observe that
  *     ad + bc = (a+b)(c+d) - ac - bd
  * so we only need 3 recursive multiplications:
@@ -31,39 +18,18 @@ import java.util.Random;
  *     z2 = karatsuba(b, d)            → bd
  *     z1 = karatsuba(a+b, c+d)        → (a+b)(c+d)
  *     middle = z1 - z0 - z2           → ad + bc
- *
  * Final result: z0*10^(2m) + middle*10^m + z2
- *
- * RECURRENCE & COMPLEXITY
- * ------------------------
- * T(n) = 3*T(n/2) + O(n)
- * By the Master Theorem (case 1):  T(n) = O(n^log2(3)) ≈ O(n^1.585)
- * Compare: Simple Multiplication is O(n^2).
- *
+ * 
  * DATA TYPE
  * ---------
  * BigInteger is used throughout so the algorithm handles arbitrarily
  * large numbers (n = 10 000 digits) without overflow.
- * BigInteger is part of Java SE — no external API is used.
- *
- * OPERATION COUNTER
- * -----------------
- * `opCount` is incremented at every primitive operation
- * (comparison, assignment, arithmetic, array/field access).
  * =============================================================
  */
 public class KaratsubaWithCounter {
 
     /** Counts every primitive operation executed inside karatsuba(). */
     public static long opCount = 0;
-
-    // -----------------------------------------------------------
-    // numLength(n)
-    //
-    //   Returns the number of decimal digits in n.
-    //   We count manually (rather than using String.length()) so
-    //   that every step is visible to the counter.
-    // -----------------------------------------------------------
     static int numLength(BigInteger n) {
         if (n.compareTo(BigInteger.ZERO) == 0) {
             opCount++;   // comparison
@@ -82,9 +48,7 @@ public class KaratsubaWithCounter {
 
     // -----------------------------------------------------------
     // karatsuba(x, y)
-    //
     //   Recursively multiplies two non-negative BigIntegers.
-    //
     //   Base case : either operand is a single digit → one multiply.
     //   Recursive : split, perform three sub-multiplications, combine.
     // -----------------------------------------------------------
@@ -92,11 +56,11 @@ public class KaratsubaWithCounter {
 
         opCount++;   // function-entry overhead (call assignment)
 
-        // ---- Determine digit lengths --------------------------------
+        // Determine digit lengths
         int xLen = numLength(x);  opCount++;   // assignment
         int yLen = numLength(y);  opCount++;
 
-        // ---- Base case: both numbers are single digits ---------------
+        // Base case: both numbers are single digits
         // Direct multiplication is one primitive operation.
         if (xLen == 1 && yLen == 1) {
             opCount += 2;                       // two comparisons
@@ -105,22 +69,22 @@ public class KaratsubaWithCounter {
         }
         opCount += 2;   // comparisons (branch not taken)
 
-        // ---- Compute split point m = ceil(max(xLen, yLen) / 2) ------
+        // Compute split point m = ceil(max(xLen, yLen) / 2)
         int maxLen = Math.max(xLen, yLen);      opCount += 2;  // max + assignment
         int m      = (maxLen / 2) + (maxLen % 2); opCount += 3; // /, %, +, = (4 ops → 3 counted conservatively)
 
         // base = 10^m  (the positional shift for the split)
         BigInteger base = BigInteger.TEN.pow(m); opCount += 2;  // pow + assignment
 
-        // ---- Split x = a * 10^m + b --------------------------------
+        //Split x = a * 10^m + b
         BigInteger a = x.divide(base);           opCount += 2;  // divide + assignment
         BigInteger b = x.remainder(base);        opCount += 2;  // remainder + assignment
 
-        // ---- Split y = c * 10^m + d --------------------------------
+        //Split y = c * 10^m + d
         BigInteger c = y.divide(base);           opCount += 2;
         BigInteger d = y.remainder(base);        opCount += 2;
 
-        // ---- Three recursive multiplications (Karatsuba's trick) ----
+        //Three recursive multiplications (Karatsuba's trick)
 
         // z0 = a * c
         BigInteger z0 = karatsuba(a, c);         opCount += 2;  // call + assignment
@@ -131,7 +95,7 @@ public class KaratsubaWithCounter {
         // z1 = (a+b) * (c+d)   ← only ONE multiplication, not two
         BigInteger z1 = karatsuba(a.add(b), c.add(d));  opCount += 4; // add,add,call,assignment
 
-        // ---- Combine results ----------------------------------------
+        // Combine results
         // middle = z1 - z0 - z2  gives ad + bc without extra multiplications
         BigInteger middle = z1.subtract(z0).subtract(z2); opCount += 3; // sub,sub,assignment
 
@@ -144,11 +108,8 @@ public class KaratsubaWithCounter {
 
         return result;
     }
-
-    // -----------------------------------------------------------
     // randomNDigit(n, rng)
     //   Returns a random n-digit BigInteger with no leading zeros.
-    // -----------------------------------------------------------
     static BigInteger randomNDigit(int n, Random rng) {
         if (n == 1) return BigInteger.valueOf(rng.nextInt(9) + 1);
         StringBuilder sb = new StringBuilder();
@@ -157,17 +118,7 @@ public class KaratsubaWithCounter {
         return new BigInteger(sb.toString());
     }
 
-    // -----------------------------------------------------------
-    // main(String[] args)
-    //
-    //   1. Verifies correctness on small fixed inputs.
-    //   2. Runs empirical experiment comparing Karatsuba vs Simple
-    //      Multiplication operation counts for n = 1..200 digits,
-    //      printing a CSV table suitable for graph plotting.
-    // -----------------------------------------------------------
-    public static void main(String[] args) {
-
-        // ---- Correctness verification on known small inputs ----------
+    public static void main(String[] args) { //  Correctness verification on known small inputs
         System.out.println("===================================================");
         System.out.println(" Karatsuba Correctness Verification");
         System.out.println("===================================================");
@@ -176,7 +127,8 @@ public class KaratsubaWithCounter {
             {1234L,  5678L},
             {102L,   313L},
             {1345L,  63456L},
-            {52301L, 380L}
+            {52301L, 380L},
+            {356281L,   997389L}
         };
 
         for (long[] t : tests) {
@@ -190,10 +142,9 @@ public class KaratsubaWithCounter {
         }
         System.out.println();
 
-        // ---- Empirical comparison experiment -------------------------
+        // ---- Empirical comparison experiment
         System.out.println("===================================================");
         System.out.println(" Part 2: Empirical Comparison");
-        System.out.println(" (Plot these values to show O(n^2) vs O(n^1.585))");
         System.out.println("===================================================");
         System.out.println("n, simpleOps, karatsubaOps");
 
@@ -225,16 +176,11 @@ public class KaratsubaWithCounter {
             System.out.println(n + ", " + simpleOps + ", " + karatsubaOps);
         }
 
-        // ---- Summary of theoretical complexity -----------------------
+        // ---- Summary of theoretical complexity
         System.out.println();
         System.out.println("=== Complexity Summary ===");
         System.out.println("  Simple Multiplication : O(n^2)");
         System.out.println("  Karatsuba Algorithm   : O(n^log2(3)) ≈ O(n^1.585)");
-        System.out.println();
-        System.out.println("Derivation for Karatsuba:");
-        System.out.println("  Recurrence: T(n) = 3*T(n/2) + O(n)");
-        System.out.println("  Master Theorem (case 1): log_b(a) = log_2(3) ≈ 1.585 > 1");
-        System.out.println("  → T(n) = Θ(n^log2(3))");
         System.out.println();
         System.out.println("Empirical observation:");
         System.out.println("  For small n, Karatsuba has more overhead than Simple.");
