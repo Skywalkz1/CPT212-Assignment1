@@ -12,7 +12,7 @@ numbers up to 10,000 digits using only the Java SE API.
 Key Objectives
 - Algorithmic Manipulation: Solve multiplication problems by implementing data structures and logic that can isolate partial products and carriers at every step.
 
-- Performance Measurement: Instrument the Java code with internal counters to track "primitive operations"—such as assignments, 
+- Performance Measurement: Instrument the Java code with internal counters to track "primitive operations" such as assignments, 
 additions, and divisions—executed during the multiplication process.
 
 - Complexity Analysis: Perform a theoretical analysis using Big-O notation and validate these findings through empirical experimentation.
