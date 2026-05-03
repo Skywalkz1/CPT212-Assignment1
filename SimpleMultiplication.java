@@ -19,21 +19,11 @@ import java.util.Random;
  *   Multiplier digit j sits at column position j (i.e. worth 10^j).
  *   So partial-product row j is shifted left by j decimal places.
  *   All shifted rows are summed to produce the final result.
- *
- * WHY BigInteger?
- *   The rubric requires handling n = 10 000-digit numbers.
- *   Java primitives (int, long) overflow far below that.
  */
 public class SimpleMultiplication {
 
     /** Counts every primitive operation executed inside simpleMultiply(). */
     public static long opCount = 0;
-    // toDigits(n)
-    //   Converts a BigInteger into an int[] of its decimal digits.
-    //   Index 0 → least-significant digit (10^0 position).
-    //   Index k → digit at the 10^k position.
-    //   Storing LSD-first makes the inner multiply loop natural:
-    //   digit[i] is always at position 10^i.
     static int[] toDigits(BigInteger n) {
         String s      = n.toString();    opCount++;   // string conversion (assignment)
         int    len    = s.length();      opCount++;   // length read (assignment)
@@ -46,7 +36,6 @@ public class SimpleMultiplication {
         opCount++;  // final loop-exit comparison
         return digits;
     }
-
     // simpleMultiply(x, y, verbose) 
     // Parameters:
     //   x, y    – BigInteger operands (assumed equal digit length)
@@ -136,7 +125,6 @@ public class SimpleMultiplication {
 
         return result;
     }
-
     // randomNDigit(n, rng)
     //   Returns a random n-digit BigInteger with no leading zeros.
     public static BigInteger randomNDigit(int n, Random rng) {
@@ -149,7 +137,6 @@ public class SimpleMultiplication {
         return new BigInteger(sb.toString());
     }
     public static void main(String[] args) {
-
         //Demo 1: assignment
         System.out.println("===================================================");
         System.out.println(" DEMO: 52301 x 380   (from PDF)");
@@ -163,7 +150,7 @@ public class SimpleMultiplication {
         System.out.println("  Correct  : " + demoResult.equals(d1.multiply(d2)));
         System.out.println("  Total operations  : " + opCount + "\n");
 
-        // ---- Demo 2: second small example ------------------------------
+        // Demo 2: second small example 
         System.out.println("===================================================");
         System.out.println(" DEMO: 1234 x 5678");
         System.out.println("===================================================");
