@@ -196,7 +196,7 @@ public class SimpleMultiplication {
         System.out.println("  Result   : " + demoResult);
         System.out.println("  Expected : " + d1.multiply(d2));
         System.out.println("  Correct  : " + demoResult.equals(d1.multiply(d2)));
-        System.out.println("  opCount  : " + opCount + "\n");
+        System.out.println("  Total operations  : " + opCount + "\n");
 
         // ---- Demo 2: second small example ------------------------------
         System.out.println("===================================================");
@@ -209,7 +209,7 @@ public class SimpleMultiplication {
         System.out.println("  Result   : " + res2);
         System.out.println("  Expected : " + a.multiply(b));
         System.out.println("  Correct  : " + res2.equals(a.multiply(b)));
-        System.out.println("  opCount  : " + opCount + "\n");
+        System.out.println("  Total operations  : " + opCount + "\n");
 
         // ---- Empirical experiment --------------------------------------
         System.out.println("===================================================");
@@ -220,9 +220,7 @@ public class SimpleMultiplication {
 
         Random rng = new Random(42);  // fixed seed → reproducible results
 
-        // Sizes tested; extend to 10000 for the full assignment experiment
-        // (run with verbose=false and redirect stdout to a file).
-        int[] sizes = {1,2,3,4,5,6,7,8,9,10,15,20,25,30,40,50,75,100,150,200};
+        int[] sizes = {10,50,100,500,1000,5000,10000};  // test sizes (number of digits)
 
         for (int n : sizes) {
             BigInteger x = randomNDigit(n, rng);
