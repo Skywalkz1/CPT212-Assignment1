@@ -200,7 +200,7 @@ public class KaratsubaWithCounter {
         Random rng = new Random(42);   // fixed seed for reproducibility
 
         // Same sizes as Part 1 for a direct side-by-side graph
-        int[] sizes = {1,2,3,4,5,6,7,8,9,10,15,20,25,30,40,50,75,100,150,200};
+        int[] sizes = {10,50,100,500,1000,5000,10000};
 
         for (int n : sizes) {
             BigInteger x = SimpleMultiplication.randomNDigit(n, rng);
