@@ -1,7 +1,9 @@
 ASSIGNMENT 1 - CPT212 Design & Analysis of Algorithms
 
 Name : Haris Zakuwan bin Sa-udi (23302870) , Danish Shazwan Bin Muhammad Khusyairi (22306866)
+
 Type : Core
+
 Date of Submission : 3rd May 2026
 
 
