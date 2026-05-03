@@ -3,12 +3,8 @@ import java.util.Random;
 
 /**
  * =============================================================
- * CPT212 Design & Analysis of Algorithms
- * Assignment 1 – Part 1 (also used by Part 2)
- *
- * Simple (Long) Multiplication Algorithm
+ * Assignment 1 – Simple Multiplication Algorithm
  * =============================================================
- *
  * ALGORITHM OVERVIEW
  * ------------------
  * Step 1 – Digit-by-digit multiplication (schoolbook method):
@@ -27,32 +23,17 @@ import java.util.Random;
  * WHY BigInteger?
  *   The rubric requires handling n = 10 000-digit numbers.
  *   Java primitives (int, long) overflow far below that.
- *   java.math.BigInteger is part of Java SE (no external API).
- *
- * OPERATION COUNTER
- *   `opCount` is a public static field incremented at every primitive
- *   operation (comparison, assignment, arithmetic, array access).
- *   Reset it to 0 before each call to simpleMultiply() when measuring.
- *
- * THEORETICAL COMPLEXITY
- *   O(n^2) — the two nested loops each iterate ~n times.
- * =============================================================
  */
 public class SimpleMultiplication {
 
     /** Counts every primitive operation executed inside simpleMultiply(). */
     public static long opCount = 0;
-
-    // -----------------------------------------------------------
     // toDigits(n)
-    //
     //   Converts a BigInteger into an int[] of its decimal digits.
     //   Index 0 → least-significant digit (10^0 position).
     //   Index k → digit at the 10^k position.
-    //
     //   Storing LSD-first makes the inner multiply loop natural:
     //   digit[i] is always at position 10^i.
-    // -----------------------------------------------------------
     static int[] toDigits(BigInteger n) {
         String s      = n.toString();    opCount++;   // string conversion (assignment)
         int    len    = s.length();      opCount++;   // length read (assignment)
@@ -66,16 +47,12 @@ public class SimpleMultiplication {
         return digits;
     }
 
-    // -----------------------------------------------------------
-    // simpleMultiply(x, y, verbose)
-    //
+    // simpleMultiply(x, y, verbose) 
     // Parameters:
     //   x, y    – BigInteger operands (assumed equal digit length)
     //   verbose – if true, prints partial products and carriers
     //             for each multiplier digit (only use for small n)
-    //
     // Returns: x * y as a BigInteger.
-    // -----------------------------------------------------------
     public static BigInteger simpleMultiply(BigInteger x, BigInteger y, boolean verbose) {
 
         int[] xDigits = toDigits(x);       opCount++;  // assignment
@@ -89,7 +66,7 @@ public class SimpleMultiplication {
         int[][] partialRows = new int[m][n + 1];  opCount++;
         int[][] carrierRows = new int[m][n + 1];  opCount++;
 
-        // ==== STEP 1: compute partial products and carriers ===============
+        //STEP 1: compute partial products and carriers 
         for (int j = 0; j < m; j++) {
             opCount++;                              // outer-loop condition
 
@@ -99,7 +76,7 @@ public class SimpleMultiplication {
             for (int i = 0; i < n; i++) {
                 opCount++;                          // inner-loop condition
 
-                // ---- Core single-digit multiply + carry ----
+                //Core single-digit multiply + carry
                 int product      = xDigits[i] * yDigit + carry;  opCount += 3; // *, +, =
                 int partialDigit = product % 10;                  opCount += 2; // %, =
                 carry            = product / 10;                  opCount += 2; // /, =
@@ -116,7 +93,7 @@ public class SimpleMultiplication {
             }
             opCount++;  // branch (else path)
 
-            // ---- Print partial products and carriers (verbose only) ------
+            //Print partial products and carriers (verbose only)
             if (verbose) {
                 StringBuilder sbPP = new StringBuilder();
                 StringBuilder sbCC = new StringBuilder();
@@ -130,7 +107,7 @@ public class SimpleMultiplication {
         }
         opCount++;  // outer-loop exit comparison
 
-        // ==== STEP 2: shift and add all partial-product rows ==============
+        //STEP 2: shift and add all partial-product rows
         BigInteger result = BigInteger.ZERO;  opCount++;  // accumulator
         BigInteger ten    = BigInteger.TEN;   opCount++;
 
@@ -160,10 +137,8 @@ public class SimpleMultiplication {
         return result;
     }
 
-    // -----------------------------------------------------------
     // randomNDigit(n, rng)
     //   Returns a random n-digit BigInteger with no leading zeros.
-    // -----------------------------------------------------------
     public static BigInteger randomNDigit(int n, Random rng) {
         if (n == 1) return BigInteger.valueOf(rng.nextInt(9) + 1);
         StringBuilder sb = new StringBuilder();
@@ -173,21 +148,11 @@ public class SimpleMultiplication {
         }
         return new BigInteger(sb.toString());
     }
-
-    // -----------------------------------------------------------
-    // main(String[] args)
-    //
-    //   1. Verbose demo on the assignment's own example (52301 x 380)
-    //      and a second small pair (1234 x 5678).
-    //   2. Empirical experiment: for each n in a chosen set,
-    //      generate two random n-digit numbers, multiply them,
-    //      and print (n, opCount) for graph plotting.
-    // -----------------------------------------------------------
     public static void main(String[] args) {
 
-        // ---- Demo 1: assignment example --------------------------------
+        //Demo 1: assignment
         System.out.println("===================================================");
-        System.out.println(" DEMO: 52301 x 380   (from assignment PDF)");
+        System.out.println(" DEMO: 52301 x 380   (from PDF)");
         System.out.println("===================================================");
         BigInteger d1 = new BigInteger("52301");
         BigInteger d2 = new BigInteger("380");
@@ -211,10 +176,9 @@ public class SimpleMultiplication {
         System.out.println("  Correct  : " + res2.equals(a.multiply(b)));
         System.out.println("  Total operations  : " + opCount + "\n");
 
-        // ---- Empirical experiment --------------------------------------
+        // ---- Empirical experiment: operation counts for random n-digit inputs ----
         System.out.println("===================================================");
-        System.out.println(" EMPIRICAL EXPERIMENT  (copy data into Excel/Python");
-        System.out.println("  to plot the graph)");
+        System.out.println(" EMPIRICAL EXPERIMENT - Operation Counts for Random n-Digit Inputs");
         System.out.println("===================================================");
         System.out.println("n, opCount");
 
@@ -235,10 +199,8 @@ public class SimpleMultiplication {
             }
             System.out.println(n + ", " + opCount);
         }
-
         System.out.println();
         System.out.println("Theoretical time complexity: O(n^2)");
         System.out.println("Justification: two nested loops, each running n iterations,");
-        System.out.println("giving n*m ~ n^2 single-digit multiply-and-carry operations.");
     }
 }
