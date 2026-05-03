@@ -1,5 +1,10 @@
 ASSIGNMENT 1 - CPT212 Design & Analysis of Algorithms
 
+Name : Haris Zakuwan bin Sa-udi (23302870) , Danish Shazwan Bin Muhammad Khusyairi (22306866)
+Type : Core
+Date of Submission : 3rd May 2026
+
+
 This assignment is part of the CPT 212 Design & Analysis of Algorithms course at the School of Computer Sciences, 
 Universiti Sains Malaysia. The primary goal is to explore how different algorithmic strategies impact computational efficiency when processing large-scale data.
 
